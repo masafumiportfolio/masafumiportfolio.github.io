@@ -56,9 +56,9 @@
   }
   
   .logo-image {
-    width: 40px; /* 画像の幅を変更 */
-    height: 40px; /* 画像の高さを変更 */
-    margin-right: 10px; /* 画像とテキストの間の余白を設定 */
+    width: 40px; 
+    height: 40px; 
+    margin-right: 10px; 
   }
   
   
@@ -184,10 +184,6 @@
   background-color: #555;
   transition: background-color 0.3s ease;
 }
-
-
-
-
 
 .hamburger {
   display: none;
