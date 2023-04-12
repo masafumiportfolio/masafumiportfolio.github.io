@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/scrollreveal"></script>
+
+
+  
+
+</head>
+<body>
+  <header>
+    <nav>
+      <button class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="logo-container">
+        <img src="img/1F408.svg" alt="Image Description" class="logo-image">
+        <div class="logo">My Portfolio</div>
+      </div>
+      
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="hero">
+      <div class="hero-content">
+        <h1>Welcome to my portfolio</h1>
+      </div>
+    </section>
+
+    <section id="about" class="reveal">
+      <img src="img/model.png" alt="Profile Picture" class="profile-picture">
+      <div class="about-content">
+       
+        <p>
+          こんにちは、私は基板業界で4年間営業職に携わってきた山内 理史です。ベンチャーから大手企業まで幅広いお客様と対応し、コミュニケーション能力と問題解決スキルを磨いてきました。最近では、IT業界への転職を決意し、プログラミングスキルの習得に励んでいます。特にPythonやJavaScriptに力を入れており、自主制作したプロジェクトをGitHubで公開しています。        </p>
+      </div>
+    </section>
+    
+
+    <section id="projects" class="reveal">
+      <h2>Projects</h2>
+      <div class="projects-grid">
+        <!-- Add your project cards here -->
+        <div class="project-item">
+          <img src="img/project-1.png" alt="Project 1">
+          <h3>英単語学習アプリ</h3>
+          <p>英単語を英検準二級~準一級相当を勉強できるアプリです。</p>
+          <p>Pythonのtkinterを使用してGUIアプリケーションを作成することで、単語学習アプリを作成しています。アプリは、3つの異なる難易度レベルから選択できます。easy、medium、hardより選択可能です。</p>
+          <a href="https://github.com/masafumiportfolio/wordchecker" target="_blank" class="github-link">View on GitHub</a>
+        </div>        
+        <div class="project-item">
+          <img src="img/project-2.png" alt="Project 2">
+          <h3>必要なプロテイン確認アプリ</h3>
+          <p>このアプリは、身長と体重を入力することで、1日に必要なプロテインの摂取量を計算し、その摂取量に合わせたプロテインパウダーの摂取量の目安を表示します。</p>
+          <p>具体的には、身長と体重を入力すると、「必要なプロテイン摂取量は○○gです。」という結果とともに、アドバイスが表示されます。</p>
+          <a href="https://github.com/masafumiportfolio/ProteinApp" target="_blank" class="github-link">View on GitHub</a>
+
+        </div>
+        <div class="project-item">
+          <img src="img/project-3.png" alt="Project 3">
+          <h3>Todoリスト</h3>
+          <p>TodoリストをGUI上で管理できるアプリです。</p>
+          <p>このプログラムは、タスクを入力し、追加、削除できるToDoリストアプリです。tkinterライブラリを使用してGUIを作成し、入力されたタスクをリストボックスに表示します。また、追加ボタンを押すことで新しいタスクをリストに追加し、削除ボタンを押すことで選択されたタスクをリストから削除します。</p>
+          <a href="https://github.com/masafumiportfolio/Todolist" target="_blank" class="github-link">View on GitHub</a>
+
+        </div>
+        <div class="project-item">
+          <img src="img/project-4.png" alt="Project 4">
+          <h3>スクレイピングアプリ</h3>
+          <p>Tkinterを用いて作成されたスクレイピングツールです。</p>
+          <p>ユーザーは、URL入力欄にスクレイピングしたいウェブサイトのURLを入力し、スクレイピング開始ボタンを押すことで、そのウェブサイトからリンクをスクレイピングすることができます。スクレイピング結果は、CSVファイルに保存されます。</p>
+          <a href="https://github.com/masafumiportfolio/Web-scraping" target="_blank" class="github-link">View on GitHub</a>
+
+        </div>
+        <div class="project-item">
+          <img src="img/project-5.png" alt="Project 5">
+          <h3>株価確認、可視化アプリ</h3>
+          <p>このコードは、株価可視化アプリを作成するためのPythonコードです。</p>
+          <p>StreamlitというPythonライブラリを使用し、株価データを取得するためにyfinance、データ解析のためにpandas、可視化のためにAltairを使用しています。ユーザーはサイドバーから日数と株式を選択し、グラフを表示することができます。また、グラフのy軸の範囲を指定することもできます。</p>
+          <a href="https://github.com/masafumiportfolio/StockPriceApp" target="_blank" class="github-link">View on GitHub</a>
+
+        </div>
+
+        </div>
+        <div class="more-projects">
+          <a href="https://github.com/masafumiportfolio" target="_blank" class="more-projects-link">View More Projects on GitHub</a>
+        </div>
+
+
+  
+      </div>
+    </section>
+
+    <section id="Contact">
+      <h2>Contact</h2>
+
+      <div class="resume-download">
+        <a href="path/to/your/resume.pdf" download="Your_Name_Resume.pdf" class="download-button">
+          職務経歴書をダウンロード
+        </a>
+      </div>
+      
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 My Portfolio. All rights reserved.</p>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const hamburger = document.querySelector('.hamburger');
+      const navMenu = document.querySelector('nav ul');
+  
+      hamburger.addEventListener('click', function () {
+        navMenu.classList.toggle('open');
+      });
+  
+      // Initialize ScrollReveal
+      const sr = ScrollReveal();
+      sr.reveal('.reveal', {
+        duration: 2000,
+        origin: 'bottom',
+        distance: '50px',
+        delay: 300,
+        reset: false,
+        easing: 'cubic-bezier(0.5, 0, 0, 1)',
+      });
+  
+      // Add a console.log to ensure that the code is running
+      console.log('ScrollReveal initialized');
+    });
+  </script>
+  
+</body>
+</html>
