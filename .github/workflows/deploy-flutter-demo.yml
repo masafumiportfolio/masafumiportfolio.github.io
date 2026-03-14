@@ -6,14 +6,16 @@ on:
     paths:
       - 'workout_tracker/**'
       - '.github/workflows/deploy-flutter-demo.yml'
-  workflow_dispatch: # 手動実行も可能
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,11 +39,24 @@ jobs:
             --base-href /workout_tracker/ \
             --release
 
-      - name: Deploy to main branch
+      - name: Prepare pages artifact
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          cp -r workout_tracker/build/web/* workout_tracker/
-          git add workout_tracker/
-          git commit -m "Deploy Flutter web demo [skip ci]" || echo "No changes to commit"
-          git push origin main
+          mkdir -p _site
+          cp -r index.html style.css img _site/
+          cp -r workout_tracker/build/web _site/workout_tracker
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
