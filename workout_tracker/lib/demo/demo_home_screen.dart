@@ -4,7 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
 import 'mock_data.dart';
-import '../screens/workout/workout_screen.dart';
+import 'demo_workout_screen.dart';
 import 'demo_history_screen.dart';
 
 class DemoHomeScreen extends ConsumerStatefulWidget {
@@ -49,7 +49,7 @@ class _DemoHomeScreenState extends ConsumerState<DemoHomeScreen> {
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => WorkoutScreen(date: _selectedDay),
+                  builder: (_) => DemoWorkoutScreen(date: _selectedDay),
                 ),
               ),
               icon: const Icon(Icons.add),
