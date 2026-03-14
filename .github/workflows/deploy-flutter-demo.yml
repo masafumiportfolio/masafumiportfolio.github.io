@@ -41,9 +41,9 @@ jobs:
 
       - name: Prepare pages artifact
         run: |
-          mkdir -p _site
+          mkdir -p _site/workout_tracker
           cp -r index.html style.css img _site/
-          cp -r workout_tracker/build/web _site/workout_tracker
+          cp -r workout_tracker/build/web/* _site/workout_tracker/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
