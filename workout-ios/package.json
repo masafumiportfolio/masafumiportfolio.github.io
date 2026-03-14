@@ -1,0 +1,19 @@
+{
+  "name": "workout-tracker-ios",
+  "version": "1.0.0",
+  "description": "筋トレ記録アプリ - iOS Native App",
+  "scripts": {
+    "build": "echo 'Static web app - no build step required'",
+    "sync": "npx cap sync ios",
+    "open": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0",
+    "@capacitor/status-bar": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  }
+}

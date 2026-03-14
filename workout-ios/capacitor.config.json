@@ -1,0 +1,27 @@
+{
+  "appId": "com.masafumiportfolio.workouttracker",
+  "appName": "筋トレ記録",
+  "webDir": "www",
+  "server": {
+    "allowNavigation": []
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "backgroundColor": "#121212",
+    "limitsNavigationsToAppBoundDomains": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#121212",
+      "showSpinner": false,
+      "androidSplashResourceName": "splash",
+      "iosSplashResourceName": "Default"
+    },
+    "StatusBar": {
+      "style": "Dark",
+      "backgroundColor": "#121212",
+      "overlaysWebView": false
+    }
+  }
+}
