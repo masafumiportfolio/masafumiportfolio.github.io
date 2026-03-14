@@ -1,0 +1,51 @@
+name: Deploy Flutter Demo to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'workout_tracker/**'
+      - '.github/workflows/deploy-flutter-demo.yml'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        working-directory: workout_tracker
+        run: flutter pub get
+
+      - name: Build Flutter Web (Demo)
+        working-directory: workout_tracker
+        run: |
+          flutter build web \
+            --target lib/main_demo.dart \
+            --base-href /workout_tracker/ \
+            --release
+
+      - name: Copy build to root
+        run: |
+          mkdir -p workout_tracker_web
+          cp -r workout_tracker/build/web/* workout_tracker_web/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./workout_tracker_web
+          destination_dir: workout_tracker
+          keep_files: true
