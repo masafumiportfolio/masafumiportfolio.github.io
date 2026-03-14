@@ -37,15 +37,11 @@ jobs:
             --base-href /workout_tracker/ \
             --release
 
-      - name: Copy build to root
+      - name: Deploy to main branch
         run: |
-          mkdir -p workout_tracker_web
-          cp -r workout_tracker/build/web/* workout_tracker_web/
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./workout_tracker_web
-          destination_dir: workout_tracker
-          keep_files: true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp -r workout_tracker/build/web/* workout_tracker/
+          git add workout_tracker/
+          git commit -m "Deploy Flutter web demo [skip ci]" || echo "No changes to commit"
+          git push origin main
