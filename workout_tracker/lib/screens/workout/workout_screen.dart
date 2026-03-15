@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 
-import '../../models/app_database.dart';
+import '../../providers/workout_provider.dart';
 import 'add_exercise_sheet.dart';
-
-const _uuid = Uuid();
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   final DateTime date;
@@ -18,11 +15,18 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 }
 
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
-  // ワークアウトデータ（exerciseId -> セットリスト）
+  // exerciseId -> セットリスト
   final Map<String, List<_SetData>> _exercises = {};
+  // exerciseId -> 種目名
   final Map<String, String> _exerciseNames = {};
 
   void _addExercise(String exerciseId, String exerciseName) {
+    if (_exercises.containsKey(exerciseId)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$exerciseName は既に追加されています')),
+      );
+      return;
+    }
     setState(() {
       _exerciseNames[exerciseId] = exerciseName;
       _exercises[exerciseId] = [_SetData()];
@@ -46,33 +50,83 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
   }
 
   Future<void> _saveWorkout() async {
-    // TODO: DBとFirestoreへの保存処理
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('トレーニングを保存しました！')),
-    );
-    Navigator.pop(context);
+    if (_exercises.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('種目を追加してください')),
+      );
+      return;
+    }
+
+    // _SetData を SetRecord に変換
+    final exerciseSets = <String, List<SetRecord>>{};
+    for (final entry in _exercises.entries) {
+      exerciseSets[entry.key] = entry.value.map((s) {
+        return (
+          weight: double.tryParse(s.weightController.text) ?? 0.0,
+          reps: int.tryParse(s.repsController.text) ?? 0,
+          isCompleted: s.isCompleted,
+        );
+      }).toList();
+    }
+
+    try {
+      await ref.read(workoutNotifierProvider.notifier).saveSession(
+            date: widget.date,
+            exerciseSets: exerciseSets,
+          );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('トレーニングを保存しました！')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('保存に失敗しました: $e')),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final sets in _exercises.values) {
+      for (final s in sets) {
+        s.dispose();
+      }
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isSaving = ref.watch(workoutNotifierProvider).isLoading;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(DateFormat('M月d日(E)', 'ja').format(widget.date)),
         actions: [
           TextButton(
-            onPressed: _saveWorkout,
-            child: const Text('保存'),
+            onPressed: isSaving ? null : _saveWorkout,
+            child: isSaving
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('保存'),
           ),
         ],
       ),
       body: _exercises.isEmpty
-          ? _EmptyState(onAddExercise: () => _showAddExerciseSheet())
+          ? _EmptyState(onAddExercise: _showAddExerciseSheet)
           : _ExerciseList(
               exercises: _exercises,
               exerciseNames: _exerciseNames,
               onAddSet: _addSet,
               onRemoveSet: _removeSet,
-              onAddExercise: () => _showAddExerciseSheet(),
+              onAddExercise: _showAddExerciseSheet,
             ),
     );
   }
@@ -92,6 +146,11 @@ class _SetData {
   final TextEditingController weightController = TextEditingController();
   final TextEditingController repsController = TextEditingController();
   bool isCompleted = false;
+
+  void dispose() {
+    weightController.dispose();
+    repsController.dispose();
+  }
 }
 
 class _EmptyState extends StatelessWidget {
@@ -155,6 +214,7 @@ class _ExerciseList extends StatelessWidget {
           icon: const Icon(Icons.add),
           label: const Text('種目を追加'),
         ),
+        const SizedBox(height: 80),
       ],
     );
   }
@@ -191,11 +251,16 @@ class _ExerciseCard extends StatelessWidget {
             const SizedBox(height: 8),
             const Row(
               children: [
-                SizedBox(width: 40, child: Text('SET', textAlign: TextAlign.center)),
+                SizedBox(
+                    width: 40,
+                    child: Text('SET', textAlign: TextAlign.center)),
                 SizedBox(width: 8),
-                Expanded(child: Text('重量 (kg)', textAlign: TextAlign.center)),
+                Expanded(
+                    child:
+                        Text('重量 (kg)', textAlign: TextAlign.center)),
                 SizedBox(width: 8),
-                Expanded(child: Text('回数', textAlign: TextAlign.center)),
+                Expanded(
+                    child: Text('回数', textAlign: TextAlign.center)),
                 SizedBox(width: 40),
               ],
             ),
@@ -237,12 +302,20 @@ class _SetRowState extends State<_SetRow> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          SizedBox(
-            width: 40,
-            child: Text(
-              '${widget.setNumber}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+          GestureDetector(
+            onTap: () => setState(
+                () => widget.data.isCompleted = !widget.data.isCompleted),
+            child: Container(
+              width: 40,
+              alignment: Alignment.center,
+              child: widget.data.isCompleted
+                  ? const Icon(Icons.check_circle,
+                      color: Color(0xFF1E88E5), size: 22)
+                  : Text(
+                      '${widget.setNumber}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
             ),
           ),
           const SizedBox(width: 8),

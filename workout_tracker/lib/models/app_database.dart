@@ -20,10 +20,16 @@ class AppDatabase extends _$AppDatabase {
   Future<List<Exercise>> getExercisesByCategory(String category) =>
       (select(exercises)..where((e) => e.category.equals(category))).get();
 
+  Future<List<Exercise>> getCustomExercises() =>
+      (select(exercises)..where((e) => e.isCustom.equals(true))).get();
+
   Future<String> insertExercise(ExercisesCompanion entry) async {
-    await into(exercises).insert(entry);
+    await into(exercises).insert(entry, mode: InsertMode.insertOrIgnore);
     return entry.id.value;
   }
+
+  Future<void> deleteExercise(String id) =>
+      (delete(exercises)..where((e) => e.id.equals(id))).go();
 
   // ---- WorkoutSessions ----
   Future<List<WorkoutSession>> getSessionsByUserId(String userId) =>
@@ -84,6 +90,15 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deleteSetsForSession(String sessionId) =>
       (delete(workoutSets)..where((s) => s.sessionId.equals(sessionId))).go();
 
+  // ---- セット数カウント ----
+  Future<int> getSetCountForSession(String sessionId) async {
+    final query = selectOnly(workoutSets)
+      ..addColumns([workoutSets.id.count()])
+      ..where(workoutSets.sessionId.equals(sessionId));
+    final result = await query.getSingleOrNull();
+    return result?.read(workoutSets.id.count()) ?? 0;
+  }
+
   // ---- 進捗クエリ ----
   /// 種目ごとの最高重量を取得
   Future<double?> getMaxWeightForExercise(String exerciseId) async {
@@ -92,6 +107,37 @@ class AppDatabase extends _$AppDatabase {
       ..where(workoutSets.exerciseId.equals(exerciseId));
     final result = await query.getSingleOrNull();
     return result?.read(workoutSets.weightKg.max());
+  }
+
+  /// 種目ごとの日付別最高重量推移を取得
+  Future<List<({DateTime date, double maxWeight})>> getExerciseProgress(
+      String exerciseId) async {
+    final query = select(workoutSets).join([
+      innerJoin(
+          workoutSessions, workoutSessions.id.equalsExp(workoutSets.sessionId)),
+    ])
+      ..where(workoutSets.exerciseId.equals(exerciseId))
+      ..orderBy([OrderingTerm.asc(workoutSessions.date)]);
+
+    final rows = await query.get();
+
+    final Map<DateTime, double> dateMaxWeight = {};
+    for (final row in rows) {
+      final session = row.readTable(workoutSessions);
+      final set = row.readTable(workoutSets);
+      final dateKey =
+          DateTime(session.date.year, session.date.month, session.date.day);
+      final current = dateMaxWeight[dateKey] ?? 0;
+      if (set.weightKg > current) {
+        dateMaxWeight[dateKey] = set.weightKg;
+      }
+    }
+
+    final result = dateMaxWeight.entries
+        .map((e) => (date: e.key, maxWeight: e.value))
+        .toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+    return result;
   }
 }
 

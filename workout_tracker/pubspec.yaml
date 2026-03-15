@@ -10,14 +10,28 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Firebase
+  firebase_core: ^3.0.0
+  firebase_auth: ^5.0.0
+  cloud_firestore: ^5.0.0
+
   # 状態管理
-  flutter_riverpod: ^2.4.9
+  flutter_riverpod: ^2.5.0
+
+  # ローカルDB (SQLite via Drift)
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.1.0
+  path: ^1.9.0
+
+  # ユーティリティ
+  uuid: ^4.4.0
+  intl: ^0.19.0
 
   # UI
-  fl_chart: ^0.66.0          # グラフ
-  table_calendar: ^3.0.9     # カレンダー
-  intl: ^0.19.0              # 日付フォーマット
-  google_fonts: ^6.1.0       # フォント
+  fl_chart: ^0.68.0
+  table_calendar: ^3.1.0
+  google_fonts: ^6.2.0
 
   cupertino_icons: ^1.0.2
 
@@ -25,6 +39,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  build_runner: ^2.4.0
+  drift_dev: ^2.18.0
 
 flutter:
   uses-material-design: true
